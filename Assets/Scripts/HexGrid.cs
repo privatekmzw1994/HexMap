@@ -14,8 +14,6 @@ public class HexGrid : MonoBehaviour
     public Text cellLabelPrefab;
     public HexGridChunk chunkPrefab;//预制块
 
-    public Color[] colors;
-
     public Texture2D noiseSource;
     HexGridChunk[] chunks;
     HexCell[] cells;
@@ -30,7 +28,6 @@ public class HexGrid : MonoBehaviour
     {
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
-        HexMetrics.colors = colors;
 
         CreateMap(cellCountX, cellCountZ);
 
@@ -104,7 +101,6 @@ public class HexGrid : MonoBehaviour
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
-            HexMetrics.colors = colors;
         }
     }
 

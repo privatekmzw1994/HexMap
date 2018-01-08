@@ -10,7 +10,6 @@ public class HexMetrics
 
     public const float solidFactor = 0.8f;//中心六边形大小
     public const float blendFactor = 1f - solidFactor;
-    public static Color[] colors;
 
     public const float elevationStep = 3f;
 

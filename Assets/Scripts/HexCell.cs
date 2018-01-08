@@ -69,15 +69,6 @@ public class HexCell : MonoBehaviour {
         }
     }
 
-    public Color Color
-    {
-        get
-        {
-            return HexMetrics.colors[terrainTypeIndex];
-        }
-
-    }
-
     //地形
     public int TerrainTypeIndex
     {

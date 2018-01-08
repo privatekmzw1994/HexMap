@@ -253,6 +253,9 @@
     <Reference Include="UnityEditor.Graphs">
       <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
@@ -295,7 +298,7 @@
     <None Include="Assets\Materials\Estuaries.shader" />
     <None Include="Assets\Materials\River.shader" />
     <None Include="Assets\Materials\Road.shader" />
-    <None Include="Assets\Materials\VertexColors.shader" />
+    <None Include="Assets\Materials\Terrain.shader" />
     <None Include="Assets\Materials\Water Shore.shader" />
     <None Include="Assets\Materials\Water.cginc" />
     <None Include="Assets\Materials\Water.shader" />
