@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
 public class HexGrid : MonoBehaviour
 {
@@ -145,7 +147,8 @@ public class HexGrid : MonoBehaviour
         Text label = Instantiate(cellLabelPrefab);
         //label.rectTransform.SetParent(gridCanvas.transform, false);
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-        label.text = cell.coordinates.ToStringOnSeparateLines();
+        ///停用显示坐标。同时停用HexMapEditor.ShowUI()
+        ///label.text = cell.coordinates.ToStringOnSeparateLines();
         cell.uiRect = label.rectTransform;
 
         cell.Elevation = 0;//最后cell的高度重置，确保每个cell建立时都不一样
@@ -216,6 +219,7 @@ public class HexGrid : MonoBehaviour
 
     public void Load(BinaryReader reader, int header)
     {
+        StopAllCoroutines();
         int x = 20, z = 15;
         if (header >= 1)
         {
@@ -237,6 +241,90 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].Refresh();
+        }
+    }
+    #endregion
+
+    #region 距离
+    public void FindPath(HexCell fromCell, HexCell toCell)
+    {
+        StopAllCoroutines();
+        StartCoroutine(Search(fromCell, toCell));
+    }
+
+    //广度优先搜索 Breadth-first search
+    IEnumerator Search(HexCell fromCell, HexCell toCell)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Distance = int.MaxValue;
+            cells[i].DisableHighlight();
+        }
+        fromCell.EnableHighlight(Color.blue);//高亮颜色
+        toCell.EnableHighlight(Color.red);//高亮颜色
+        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+        List<HexCell> frontier = new List<HexCell>();
+        fromCell.Distance = 0;
+        frontier.Add(fromCell);
+        while (frontier.Count > 0)
+        {
+            yield return delay;
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+            if (current == toCell)
+            {
+                current = current.PathFrom;
+                while (current != fromCell)
+                {
+                    current.EnableHighlight(Color.white);
+                    current = current.PathFrom;
+                }
+                break;
+            }
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+                if (neighbor == null)
+                {
+                    continue;
+                }
+                if (neighbor.IsUnderwater)
+                {
+                    continue;
+                }
+                HexEdgeType edgeType = current.GetEdgeType(neighbor);
+                if (edgeType == HexEdgeType.Cliff)
+                {
+                    continue;
+                }
+                int distance = current.Distance;
+                if (current.HasRoadThroughEdge(d))
+                {
+                    distance += 1;
+                }
+                else if (current.Walled != neighbor.Walled)
+                {
+                    continue;
+                }
+                else
+                {
+                    distance += edgeType == HexEdgeType.Flat ? 5 : 10;
+                    distance += neighbor.UrbanLevel + neighbor.FarmLevel +
+                        neighbor.PlantLevel;
+                }
+                if (neighbor.Distance == int.MaxValue)
+                {
+                    neighbor.Distance = distance;
+                    neighbor.PathFrom = current;
+                    frontier.Add(neighbor);
+                }
+                else if (distance < neighbor.Distance)
+                {
+                    neighbor.Distance = distance;
+                    neighbor.PathFrom = current;
+                }
+                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+            }
         }
     }
     #endregion

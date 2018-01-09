@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using System.IO;
 
 public class HexMapEditor : MonoBehaviour
 {
 
     public HexGrid hexGrid;
     int activeTerrainTypeIndex;//地形
+    public Material terrainMaterial;
 
     int activeElevation;
     int activeWaterLevel;
@@ -18,6 +18,8 @@ public class HexMapEditor : MonoBehaviour
 
     bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 
+    bool editMode;
+
     //河流编辑设置
     enum OptionalToggle
     {
@@ -27,7 +29,12 @@ public class HexMapEditor : MonoBehaviour
     //拖动设置(用来绘制河流,道路)
     bool isDrag;
     HexDirection dragDirection;
-    HexCell previousCell;
+    HexCell previousCell, searchFromCell, searchToCell;
+
+    void Awake()
+    {
+        terrainMaterial.DisableKeyword("GRID_ON");//禁用关键字
+    }
 
     void Update()
     {
@@ -57,7 +64,28 @@ public class HexMapEditor : MonoBehaviour
             {
                 isDrag = false;
             }
-            EditCells(currentCell);
+            if (editMode)
+            {
+                EditCells(currentCell);
+            }
+            else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+            {
+                if (searchFromCell)
+                {
+                    searchFromCell.DisableHighlight();
+                }
+                searchFromCell = currentCell;
+                searchFromCell.EnableHighlight(Color.blue);//高亮颜色
+                if (searchToCell)
+                {
+                    hexGrid.FindPath(searchFromCell, searchToCell);
+                }
+            }
+            else if (searchFromCell && searchFromCell != currentCell)
+            {
+                searchToCell = currentCell;
+                hexGrid.FindPath(searchFromCell, searchToCell);
+            }
             previousCell = currentCell;
         }
         else
@@ -107,11 +135,12 @@ public class HexMapEditor : MonoBehaviour
         }
     }
 
+    /// 停用Label控制。同时停用HexGrid.CreateCell中的label.text。
     //Label控制
-    public void ShowUI(bool visible)
-    {
-        hexGrid.ShowUI(visible);
-    }
+    ///public void ShowUI(bool visible)
+    ///{
+    ///hexGrid.ShowUI(visible);
+    ///}
 
     //设置河流模式
     public void SetRiverMode(int mode)
@@ -268,4 +297,22 @@ public class HexMapEditor : MonoBehaviour
         activeTerrainTypeIndex = index;
     }
 
+    //显示网格
+    public void ShowGrid(bool visible)
+    {
+        if (visible)
+        {
+            terrainMaterial.EnableKeyword("GRID_ON");
+        }
+        else
+        {
+            terrainMaterial.DisableKeyword("GRID_ON");
+        }
+    }
+
+    public void SetEditMode(bool toggle)
+    {
+        editMode = toggle;
+        hexGrid.ShowUI(!toggle);
+    }
 }

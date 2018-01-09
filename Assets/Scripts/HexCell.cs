@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 
@@ -27,6 +27,8 @@ public class HexCell : MonoBehaviour {
     bool[] roads;
     int urbanLevel, farmLevel, plantLevel;//城市等级、农田等级、植物等级
     int specialIndex;//特殊地标
+
+    int distance;//距离
 
     public HexCell GetNeighbor(HexDirection direction)
     {
@@ -607,5 +609,42 @@ public class HexCell : MonoBehaviour {
             roads[i] = (roadFlags & (1 << i)) != 0;
         }
     }
+    #endregion
+    #region 距离
+    //显示距离
+    void UpdateDistanceLabel()
+    {
+        Text label = uiRect.GetComponent<Text>();
+        label.text = distance == int.MaxValue ? "" : distance.ToString();
+    }
+    public int Distance
+    {
+        get
+        {
+            return distance;
+        }
+        set
+        {
+            distance = value;
+            UpdateDistanceLabel();
+        }
+    }
+    #endregion
+    #region 高亮
+    public void DisableHighlight()
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.enabled = false;
+    }
+
+    public void EnableHighlight(Color color)
+    {
+        Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+        highlight.color = color;
+        highlight.enabled = true;
+    }
+
+    //寻路
+    public HexCell PathFrom { get; set; }
     #endregion
 }
