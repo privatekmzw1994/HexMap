@@ -26,6 +26,8 @@ public class HexGrid : MonoBehaviour
 
     public int seed;//哈希种子
 
+    HexCellPriorityQueue searchFrontier;
+
     private void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
@@ -252,9 +254,17 @@ public class HexGrid : MonoBehaviour
         StartCoroutine(Search(fromCell, toCell));
     }
 
-    //广度优先搜索 Breadth-first search
+    //寻路算法
     IEnumerator Search(HexCell fromCell, HexCell toCell)
     {
+        if (searchFrontier == null)
+        {
+            searchFrontier = new HexCellPriorityQueue();
+        }
+        else
+        {
+            searchFrontier.Clear();
+        }
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Distance = int.MaxValue;
@@ -263,14 +273,12 @@ public class HexGrid : MonoBehaviour
         fromCell.EnableHighlight(Color.blue);//高亮颜色
         toCell.EnableHighlight(Color.red);//高亮颜色
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-        List<HexCell> frontier = new List<HexCell>();
         fromCell.Distance = 0;
-        frontier.Add(fromCell);
-        while (frontier.Count > 0)
+        searchFrontier.Enqueue(fromCell);
+        while (searchFrontier.Count > 0)
         {
             yield return delay;
-            HexCell current = frontier[0];
-            frontier.RemoveAt(0);
+            HexCell current = searchFrontier.Dequeue();
             if (current == toCell)
             {
                 current = current.PathFrom;
@@ -316,14 +324,16 @@ public class HexGrid : MonoBehaviour
                 {
                     neighbor.Distance = distance;
                     neighbor.PathFrom = current;
-                    frontier.Add(neighbor);
+                    neighbor.SearchHeuristic = (neighbor.coordinates.DistanceTo(toCell.coordinates))*5;//启发式
+                    searchFrontier.Enqueue(neighbor);
                 }
                 else if (distance < neighbor.Distance)
                 {
+                    int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
                     neighbor.PathFrom = current;
+                    searchFrontier.Change(neighbor, oldPriority);
                 }
-                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
             }
         }
     }

@@ -647,4 +647,15 @@ public class HexCell : MonoBehaviour {
     //寻路
     public HexCell PathFrom { get; set; }
     #endregion
+    #region A*寻路
+    public int SearchHeuristic { get; set; }
+    public int SearchPriority//搜索优先级
+    {
+        get
+        {
+            return distance + SearchHeuristic;
+        }
+    }
+    public HexCell NextWithSamePriority { get; set; }
+    #endregion
 }
