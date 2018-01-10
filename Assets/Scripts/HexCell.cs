@@ -612,11 +612,16 @@ public class HexCell : MonoBehaviour {
     #endregion
     #region 距离
     //显示距离
-    void UpdateDistanceLabel()
+    public void SetLabel(string text)
     {
-        Text label = uiRect.GetComponent<Text>();
-        label.text = distance == int.MaxValue ? "" : distance.ToString();
+        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        label.text = text;
     }
+    //void UpdateDistanceLabel()
+    //{
+    //    Text label = uiRect.GetComponent<Text>();
+    //    label.text = distance == int.MaxValue ? "" : distance.ToString();
+    //}
     public int Distance
     {
         get
@@ -626,7 +631,7 @@ public class HexCell : MonoBehaviour {
         set
         {
             distance = value;
-            UpdateDistanceLabel();
+           //UpdateDistanceLabel();
         }
     }
     #endregion
@@ -657,5 +662,6 @@ public class HexCell : MonoBehaviour {
         }
     }
     public HexCell NextWithSamePriority { get; set; }
+    public int SearchPhase { get; set; }
     #endregion
 }
