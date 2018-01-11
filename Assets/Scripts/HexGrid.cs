@@ -184,6 +184,17 @@ public class HexGrid : MonoBehaviour
     //    hexMesh.Triangulate(cells);
     //}
 
+    //获取单元
+    public HexCell GetCell(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return GetCell(hit.point);
+        }
+        return null;
+    }
+
     public HexCell GetCell(Vector3 position)
     {
         position = transform.InverseTransformPoint(position);
@@ -312,7 +323,7 @@ public class HexGrid : MonoBehaviour
                 {
                     continue;
                 }
-                if (neighbor.IsUnderwater)
+                if (neighbor.IsUnderwater || neighbor.Unit)//避免不能移动的位置或单位
                 {
                     continue;
                 }
@@ -376,13 +387,14 @@ public class HexGrid : MonoBehaviour
                 current.SetLabel(turn.ToString());
                 current.EnableHighlight(Color.white);
                 current = current.PathFrom;
+                currentPathFrom.EnableHighlight(Color.blue);
+                currentPathTo.EnableHighlight(Color.red);
             }
         }
-        currentPathFrom.EnableHighlight(Color.blue);
-        currentPathTo.EnableHighlight(Color.red);
+
     }
     //清除路径
-    void ClearPath()
+    public void ClearPath()
     {
         if (currentPathExists)
         {
@@ -397,6 +409,14 @@ public class HexGrid : MonoBehaviour
             currentPathExists = false;
         }
         currentPathFrom = currentPathTo = null;
+    }
+    //单位路径
+    public bool HasPath
+    {
+        get
+        {
+            return currentPathExists;
+        }
     }
     #endregion
 

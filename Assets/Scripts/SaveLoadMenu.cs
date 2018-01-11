@@ -93,7 +93,7 @@ public class SaveLoadMenu : MonoBehaviour
         )
         {
             int header = reader.ReadInt32();
-            if (header <= 1)//版本判断
+            if (header <= 2)//版本判断
             {
                 hexGrid.Load(reader, header);
                 HexMapCamera.ValidatePosition();

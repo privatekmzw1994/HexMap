@@ -18,10 +18,6 @@ public class HexMapEditor : MonoBehaviour
 
     bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 
-    bool editMode;
-
-    public HexUnit unitPrefab;
-
     //河流编辑设置
     enum OptionalToggle
     {
@@ -31,11 +27,12 @@ public class HexMapEditor : MonoBehaviour
     //拖动设置(用来绘制河流,道路)
     bool isDrag;
     HexDirection dragDirection;
-    HexCell previousCell, searchFromCell, searchToCell;
+    HexCell previousCell;
 
     void Awake()
     {
         terrainMaterial.DisableKeyword("GRID_ON");//禁用关键字
+        SetEditMode(false);
     }
 
     void Update()
@@ -66,6 +63,7 @@ public class HexMapEditor : MonoBehaviour
     //找到光标下的单元
     HexCell GetCellUnderCursor()
     {
+        //return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
@@ -88,34 +86,7 @@ public class HexMapEditor : MonoBehaviour
             {
                 isDrag = false;
             }
-            if (editMode)
-            {
-                EditCells(currentCell);
-            }
-            else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
-            {
-                if (searchFromCell != currentCell)
-                {
-                    if (searchFromCell)
-                    {
-                        searchFromCell.DisableHighlight();
-                    }
-                    searchFromCell = currentCell;
-                    searchFromCell.EnableHighlight(Color.blue);//高亮颜色
-                    if (searchToCell)
-                    {
-                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                    }
-                }
-            }
-            else if (searchFromCell && searchFromCell != currentCell)
-            {
-                if (searchToCell != currentCell)
-                {
-                    searchToCell = currentCell;
-                    hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                }
-            }
+            EditCells(currentCell);
             previousCell = currentCell;
         }
         else
@@ -342,8 +313,7 @@ public class HexMapEditor : MonoBehaviour
 
     public void SetEditMode(bool toggle)
     {
-        editMode = toggle;
-        hexGrid.ShowUI(!toggle);
+        enabled = toggle;
     }
 
     #region 单位
@@ -353,9 +323,12 @@ public class HexMapEditor : MonoBehaviour
         HexCell cell = GetCellUnderCursor();
         if (cell && !cell.Unit)//保证只有一个单位
         {
-            hexGrid.AddUnit(HexUnit.unitPrefab, cell, Random.Range(0f, 360f));//不一定要360度
+            hexGrid.AddUnit(
+                Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)//不一定要360度
+            );
         }
     }
+
     //摧毁单位
     void DestroyUnit()
     {

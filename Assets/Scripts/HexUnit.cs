@@ -15,6 +15,10 @@ public class HexUnit : MonoBehaviour
         }
         set
         {
+            if (location)
+            {
+                location.Unit = null;
+            }
             location = value;
             value.Unit = this;
             transform.localPosition = value.Position;
@@ -58,5 +62,11 @@ public class HexUnit : MonoBehaviour
         grid.AddUnit(
             Instantiate(unitPrefab), grid.GetCell(coordinates), orientation
         );
+    }
+
+    //能都有效到达目的地
+    public bool IsValidDestination(HexCell cell)
+    {
+        return !cell.IsUnderwater && !cell.Unit; 
     }
 }
