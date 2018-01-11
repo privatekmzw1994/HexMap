@@ -75,7 +75,7 @@ public class SaveLoadMenu : MonoBehaviour
                  new BinaryWriter(File.Open(path, FileMode.Create))
          )
         {
-            writer.Write(1);//版本管理 四个字节
+            writer.Write(2);//版本管理 四个字节
             hexGrid.Save(writer);
         }
     }

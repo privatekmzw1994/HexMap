@@ -125,6 +125,9 @@ public class HexCell : MonoBehaviour {
                     neighbor.chunk.Refresh();
                 }
             }
+            if(Unit){
+                Unit.ValidateLocation();
+            }
         }
     }
     //刷新高度海拔
@@ -291,6 +294,10 @@ public class HexCell : MonoBehaviour {
     void RefreshSelfOnly()//只刷新自己不影响邻居
     {
         chunk.Refresh();
+        if (Unit)
+        {
+            Unit.ValidateLocation();
+        }
     }
 
     //检查河流方向是否正确
@@ -663,5 +670,9 @@ public class HexCell : MonoBehaviour {
     }
     public HexCell NextWithSamePriority { get; set; }
     public int SearchPhase { get; set; }
+    #endregion
+
+    #region 单位
+    public HexUnit Unit { get; set; }
     #endregion
 }

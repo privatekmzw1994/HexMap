@@ -20,6 +20,8 @@ public class HexMapEditor : MonoBehaviour
 
     bool editMode;
 
+    public HexUnit unitPrefab;
+
     //河流编辑设置
     enum OptionalToggle
     {
@@ -38,24 +40,46 @@ public class HexMapEditor : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0) &&
-            !EventSystem.current.IsPointerOverGameObject())
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            HandleInput();
+            if (Input.GetMouseButton(0))
+            {
+                HandleInput();
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    DestroyUnit();
+                }
+                else
+                {
+                    CreateUnit();
+                }
+                return;
+            }
         }
-        else
-        {
-            previousCell = null;
-        }
+        previousCell = null;
     }
 
-    void HandleInput()
+    //找到光标下的单元
+    HexCell GetCellUnderCursor()
     {
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            HexCell currentCell = hexGrid.GetCell(hit.point);
+            return hexGrid.GetCell(hit.point);
+        }
+        return null;
+    }
+
+    void HandleInput()
+    {
+        HexCell currentCell = GetCellUnderCursor();
+        if (currentCell)
+        {
             if (previousCell && previousCell != currentCell)
             {
                 ValidateDrag(currentCell);
@@ -321,4 +345,25 @@ public class HexMapEditor : MonoBehaviour
         editMode = toggle;
         hexGrid.ShowUI(!toggle);
     }
+
+    #region 单位
+    //加单位
+    void CreateUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && !cell.Unit)//保证只有一个单位
+        {
+            hexGrid.AddUnit(HexUnit.unitPrefab, cell, Random.Range(0f, 360f));//不一定要360度
+        }
+    }
+    //摧毁单位
+    void DestroyUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && cell.Unit)
+        {
+            hexGrid.RemoveUnit(cell.Unit);
+        }
+    }
+    #endregion
 }
