@@ -253,9 +253,6 @@
     <Reference Include="UnityEditor.Graphs">
       <HintPath>Library\UnityAssemblies\UnityEditor.Graphs.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor.Android.Extensions">
-      <HintPath>Library\UnityAssemblies\UnityEditor.Android.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>Library\UnityAssemblies\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
     </Reference>
@@ -285,6 +282,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Bezier.cs" />
     <Compile Include="Assets\Scripts\EdgeVertices.cs" />
     <Compile Include="Assets\Scripts\HexCell.cs" />
     <Compile Include="Assets\Scripts\HexCellPriorityQueue.cs" />
@@ -293,19 +291,19 @@
     <Compile Include="Assets\Scripts\HexEdgeType.cs" />
     <Compile Include="Assets\Scripts\HexFeatureCollection.cs" />
     <Compile Include="Assets\Scripts\HexFeatureManager.cs" />
-    <Compile Include="Assets\Scripts\HexGameUI.cs" />
     <Compile Include="Assets\Scripts\HexGrid.cs" />
     <Compile Include="Assets\Scripts\HexGridChunk.cs" />
     <Compile Include="Assets\Scripts\HexHash.cs" />
     <Compile Include="Assets\Scripts\HexMapCamera.cs" />
-    <Compile Include="Assets\Scripts\HexMapEditor.cs" />
     <Compile Include="Assets\Scripts\HexMesh.cs" />
     <Compile Include="Assets\Scripts\HexMetrics.cs" />
     <Compile Include="Assets\Scripts\HexUnit.cs" />
     <Compile Include="Assets\Scripts\ListPool.cs" />
-    <Compile Include="Assets\Scripts\NewMapMenu.cs" />
-    <Compile Include="Assets\Scripts\SaveLoadItem.cs" />
-    <Compile Include="Assets\Scripts\SaveLoadMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\HexGameUI.cs" />
+    <Compile Include="Assets\Scripts\UI\HexMapEditor.cs" />
+    <Compile Include="Assets\Scripts\UI\NewMapMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\SaveLoadItem.cs" />
+    <Compile Include="Assets\Scripts\UI\SaveLoadMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Materials\Estuaries.shader" />
