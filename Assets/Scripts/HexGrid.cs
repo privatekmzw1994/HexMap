@@ -34,13 +34,15 @@ public class HexGrid : MonoBehaviour
     List<HexUnit> units = new List<HexUnit>();
     public HexUnit unitPrefab;
 
+    HexCellShaderData cellShaderData;
+
     private void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
         HexMetrics.InitializeHashGrid(seed);
         HexUnit.unitPrefab = unitPrefab;
+        cellShaderData = gameObject.AddComponent<HexCellShaderData>();
         CreateMap(cellCountX, cellCountZ);
-
     }
 
     //新建地图
@@ -69,6 +71,7 @@ public class HexGrid : MonoBehaviour
         chunkCountX = cellCountX / HexMetrics.chunkSizeX;
         chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
+        cellShaderData.Initialize(cellCountX, cellCountZ);
         CreateChunks();
         CreateCells();
         return true;
@@ -128,6 +131,7 @@ public class HexGrid : MonoBehaviour
         //cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+        cell.ShaderData = cellShaderData;
 
         //邻居关系建立
         if (x > 0)

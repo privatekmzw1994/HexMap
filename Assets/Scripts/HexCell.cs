@@ -83,7 +83,7 @@ public class HexCell : MonoBehaviour {
             if (terrainTypeIndex != value)
             {
                 terrainTypeIndex = value;
-                Refresh();
+                ShaderData.RefreshTerrain(this);
             }
         }
     }
@@ -579,6 +579,7 @@ public class HexCell : MonoBehaviour {
     public void Load(BinaryReader reader)
     {
         terrainTypeIndex = reader.ReadByte();
+        ShaderData.RefreshTerrain(this);
         elevation = reader.ReadByte();
         RefreshPosition();
         waterLevel = reader.ReadByte();
@@ -671,8 +672,10 @@ public class HexCell : MonoBehaviour {
     public HexCell NextWithSamePriority { get; set; }
     public int SearchPhase { get; set; }
     #endregion
-
     #region 单位
     public HexUnit Unit { get; set; }
+    #endregion
+    #region 战争迷雾
+    public HexCellShaderData ShaderData { get; set; }//渲染
     #endregion
 }
