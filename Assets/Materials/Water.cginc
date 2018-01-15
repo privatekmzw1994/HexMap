@@ -18,7 +18,7 @@
 float River(float2 riverUV, sampler2D noiseTex) {
 	float2 uv = riverUV;
 	uv.x = uv.x * 0.0625 + _Time.y * 0.005;//U方向拉伸（加上0.005的缓慢移动可以
-			//使水看起来有横向上的变化但速度不能过快，不然看起来像横向上的流动）
+										   //使水看起来有横向上的变化但速度不能过快，不然看起来像横向上的流动）
 	uv.y -= _Time.y * 0.25;//河流速度为1/4
 	float4 noise = tex2D(noiseTex, uv);
 
@@ -49,6 +49,5 @@ float Waves(float2 worldXZ, sampler2D noiseTex) {
 	float waves =
 		lerp(noise1.z, noise1.w, blendWave) +
 		lerp(noise2.x, noise2.y, blendWave);
-	noise1.z + noise2.x;
 	return smoothstep(0.75, 2, waves);
 }

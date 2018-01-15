@@ -131,6 +131,7 @@ public class HexGrid : MonoBehaviour
         //cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+        cell.Index = i;
         cell.ShaderData = cellShaderData;
 
         //邻居关系建立
@@ -284,7 +285,6 @@ public class HexGrid : MonoBehaviour
         }
     }
     #endregion
-
     #region 距离
     public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
@@ -307,6 +307,7 @@ public class HexGrid : MonoBehaviour
         {
             searchFrontier.Clear();
         }
+
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
@@ -314,16 +315,21 @@ public class HexGrid : MonoBehaviour
         {
             HexCell current = searchFrontier.Dequeue();
             current.SearchPhase += 1;
+
             if (current == toCell)
             {
                 return true;
             }
+
             int currentTurn = (current.Distance - 1) / speed;//引入回合
+
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
-                if (neighbor == null ||
-                    neighbor.SearchPhase > searchFrontierPhase)
+                if (
+                    neighbor == null ||
+                    neighbor.SearchPhase > searchFrontierPhase
+                )
                 {
                     continue;
                 }
@@ -351,26 +357,26 @@ public class HexGrid : MonoBehaviour
                     moveCost += neighbor.UrbanLevel + neighbor.FarmLevel +
                         neighbor.PlantLevel;
                 }
+
                 int distance = current.Distance + moveCost;
-                int turn = (distance - 1) / speed;//回合
+                int turn = (distance - 1) / speed;
                 if (turn > currentTurn)
                 {
                     distance = turn * speed + moveCost;
                 }
+
                 if (neighbor.SearchPhase < searchFrontierPhase)
                 {
                     neighbor.SearchPhase = searchFrontierPhase;
                     neighbor.Distance = distance;
-                    //neighbor.SetLabel(turn.ToString());
                     neighbor.PathFrom = current;
-                    neighbor.SearchHeuristic = (neighbor.coordinates.DistanceTo(toCell.coordinates))*5;//启发式
+                    neighbor.SearchHeuristic =(neighbor.coordinates.DistanceTo(toCell.coordinates)) * 5;//启发式
                     searchFrontier.Enqueue(neighbor);
                 }
                 else if (distance < neighbor.Distance)
                 {
                     int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
-                    //neighbor.SetLabel(turn.ToString());
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }
@@ -423,7 +429,6 @@ public class HexGrid : MonoBehaviour
         }
     }
     #endregion
-
     #region 单位
     //清楚所有单位
     void ClearUnits()
@@ -438,6 +443,7 @@ public class HexGrid : MonoBehaviour
     public void AddUnit(HexUnit unit, HexCell location, float orientation)
     {
         units.Add(unit);
+        unit.Grid = this;
         unit.transform.SetParent(transform, false);
         unit.Location = location;
         unit.Orientation = orientation;
@@ -464,6 +470,83 @@ public class HexGrid : MonoBehaviour
         path.Add(currentPathFrom);
         path.Reverse();//从目的地开始排序
         return path;
+    }
+    #endregion
+    #region 战争迷雾
+    //能见度
+    List<HexCell> GetVisibleCells(HexCell fromCell, int range)
+    {
+        List<HexCell> visibleCells = ListPool<HexCell>.Get();
+
+        searchFrontierPhase += 2;
+        if (searchFrontier == null)
+        {
+            searchFrontier = new HexCellPriorityQueue();
+        }
+        else
+        {
+            searchFrontier.Clear();
+        }
+
+        fromCell.SearchPhase = searchFrontierPhase;
+        fromCell.Distance = 0;
+        searchFrontier.Enqueue(fromCell);
+        while (searchFrontier.Count > 0)
+        {
+            HexCell current = searchFrontier.Dequeue();
+            current.SearchPhase += 1;
+            visibleCells.Add(current);
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbor = current.GetNeighbor(d);
+                if (
+                    neighbor == null ||
+                    neighbor.SearchPhase > searchFrontierPhase
+                )
+                {
+                    continue;
+                }
+                int distance = current.Distance + 1;
+                if (distance > range)
+                {
+                    continue;
+                }
+                if (neighbor.SearchPhase < searchFrontierPhase)
+                {
+                    neighbor.SearchPhase = searchFrontierPhase;
+                    neighbor.Distance = distance;
+                    neighbor.SearchHeuristic = 0;
+                    searchFrontier.Enqueue(neighbor);
+                }
+                else if (distance < neighbor.Distance)
+                {
+                    int oldPriority = neighbor.SearchPriority;
+                    neighbor.Distance = distance;
+                    searchFrontier.Change(neighbor, oldPriority);
+                }
+            }
+        }
+        return visibleCells;
+    }
+
+    public void IncreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> cells = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].IncreaseVisibility();
+        }
+        ListPool<HexCell>.Add(cells);
+    }
+
+    public void DecreaseVisibility(HexCell fromCell, int range)
+    {
+        List<HexCell> cells = GetVisibleCells(fromCell, range);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            cells[i].DecreaseVisibility();
+        }
+        ListPool<HexCell>.Add(cells);
     }
     #endregion
 }

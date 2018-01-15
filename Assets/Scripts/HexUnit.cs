@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HexUnit : MonoBehaviour
 {
-    HexCell location;//位置
+    HexCell location, currentTravelLocation;//位置,移动中的当前位置
     float orientation;//转向
     public static HexUnit unitPrefab;
     const float travelSpeed = 4f;
@@ -14,11 +14,19 @@ public class HexUnit : MonoBehaviour
 
     const float rotationSpeed = 180f;
 
+    const int visionRange = 3;//视野范围
+
     void OnEnable()
     {
         if (location)
         {
             transform.localPosition = location.Position;
+            if (currentTravelLocation)
+            {
+                Grid.IncreaseVisibility(location, visionRange);
+                Grid.DecreaseVisibility(currentTravelLocation, visionRange);
+                currentTravelLocation = null;
+            }
         }
     }
 
@@ -32,10 +40,12 @@ public class HexUnit : MonoBehaviour
         {
             if (location)
             {
+                Grid.DecreaseVisibility(location, visionRange);
                 location.Unit = null;
             }
             location = value;
             value.Unit = this;
+            Grid.IncreaseVisibility(value, visionRange);
             transform.localPosition = value.Position;
         }
     }
@@ -55,7 +65,7 @@ public class HexUnit : MonoBehaviour
 
     public void ValidateLocation()//验证位置
     {
-        transform.localPosition = location.Position;
+        Grid.DecreaseVisibility(location, visionRange);
     }
 
     public void Die()
@@ -66,6 +76,10 @@ public class HexUnit : MonoBehaviour
     //保存
     public void Save(BinaryWriter writer)
     {
+        if (location)
+        {
+            location.DecreaseVisibility();
+        }
         location.coordinates.Save(writer);
         writer.Write(orientation);
     }
@@ -88,7 +102,9 @@ public class HexUnit : MonoBehaviour
     //移动
     public void Travel(List<HexCell> path)
     {
-        Location = path[path.Count - 1];
+        location.Unit = null;
+        location = path[path.Count - 1];
+        location.Unit = this;
         pathToTravel = path;
         StopAllCoroutines();
         StartCoroutine(TravelPath());
@@ -124,16 +140,21 @@ public class HexUnit : MonoBehaviour
 
     IEnumerator TravelPath()
     {
-        Vector3 a, b, c = pathToTravel[0].Position;
-        transform.localPosition = c;
+        Vector3 a, b, c = pathToTravel[0].Position;    
         yield return LookAt(pathToTravel[1].Position);
+        Grid.DecreaseVisibility(
+             currentTravelLocation ? currentTravelLocation : pathToTravel[0],
+             visionRange
+         );
 
         float t = Time.deltaTime * travelSpeed;
         for (int i = 1; i < pathToTravel.Count; i++)
         {
+            currentTravelLocation = pathToTravel[i];
             a = c;
             b = pathToTravel[i - 1].Position;
-            c = (b + pathToTravel[i].Position) * 0.5f;
+            c = (b + currentTravelLocation.Position) * 0.5f;
+            Grid.IncreaseVisibility(pathToTravel[i], visionRange);
             for (; t < 1f; t += Time.deltaTime * travelSpeed)
             {
                 transform.localPosition = Bezier.GetPoint(a, b, c, t);
@@ -142,12 +163,15 @@ public class HexUnit : MonoBehaviour
                 transform.localRotation = Quaternion.LookRotation(d);
                 yield return null;
             }
+            Grid.DecreaseVisibility(pathToTravel[i], visionRange);
             t -= 1f;
         }
+        currentTravelLocation = null;
 
         a = c;
-        b = pathToTravel[pathToTravel.Count - 1].Position;
+        b = location.Position;//pathToTravel[pathToTravel.Count - 1].Position;
         c = b;
+        Grid.IncreaseVisibility(location, visionRange);
         for (; t < 1f; t += Time.deltaTime * travelSpeed)
         {
             transform.localPosition = Bezier.GetPoint(a, b, c, t);
@@ -188,4 +212,6 @@ public class HexUnit : MonoBehaviour
             }
         }
     }
+
+    public HexGrid Grid { get; set; }
 }

@@ -30,6 +30,8 @@ public class HexCell : MonoBehaviour {
 
     int distance;//距离
 
+    int visibility;//能见度
+
     public HexCell GetNeighbor(HexDirection direction)
     {
         return neighbors[(int)direction];
@@ -677,5 +679,33 @@ public class HexCell : MonoBehaviour {
     #endregion
     #region 战争迷雾
     public HexCellShaderData ShaderData { get; set; }//渲染
+    public int Index { get; set; }//索引
+
+    //是否可见
+    public bool IsVisible
+    {
+        get
+        {
+            return visibility > 0;
+        }
+    }
+    //增大可见度
+    public void IncreaseVisibility()
+    {
+        visibility += 1;
+        if (visibility == 1)
+        {
+            ShaderData.RefreshVisibility(this);
+        }
+    }
+    //减小可见度
+    public void DecreaseVisibility()
+    {
+        visibility -= 1;
+        if (visibility == 0)
+        {
+            ShaderData.RefreshVisibility(this);
+        }
+    }
     #endregion
 }
