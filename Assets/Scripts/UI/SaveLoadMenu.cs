@@ -15,6 +15,8 @@ public class SaveLoadMenu : MonoBehaviour
 
     public SaveLoadItem itemPrefab;
 
+    const int mapFileVersion = 3;//地图版本
+
     public void Open(bool saveMode)
     {
         this.saveMode = saveMode;
@@ -75,7 +77,7 @@ public class SaveLoadMenu : MonoBehaviour
                  new BinaryWriter(File.Open(path, FileMode.Create))
          )
         {
-            writer.Write(2);//版本管理 四个字节
+            writer.Write(mapFileVersion);//版本管理 四个字节
             hexGrid.Save(writer);
         }
     }
@@ -93,7 +95,7 @@ public class SaveLoadMenu : MonoBehaviour
         )
         {
             int header = reader.ReadInt32();
-            if (header <= 2)//版本判断
+            if (header <= mapFileVersion)//版本判断
             {
                 hexGrid.Load(reader, header);
                 HexMapCamera.ValidatePosition();
