@@ -32,6 +32,10 @@ public class HexCell : MonoBehaviour {
 
     int visibility;//能见度
 
+    bool needsVisibilityReset;
+    bool explored;
+
+
     public HexCell GetNeighbor(HexDirection direction)
     {
         return neighbors[(int)direction];
@@ -55,7 +59,12 @@ public class HexCell : MonoBehaviour {
             {
                 return;
             }
+            int originalViewElevation = ViewElevation;
             elevation = value;
+            if (ViewElevation != originalViewElevation)
+            {
+                ShaderData.ViewElevationChanged();
+            }
             RefreshPosition();//刷新高度海拔
             //清除非法河流(即河流上坡)
             ValidateRivers();
@@ -413,7 +422,12 @@ public class HexCell : MonoBehaviour {
             {
                 return;
             }
+            int originalViewElevation = ViewElevation;
             waterLevel = value;
+            if (ViewElevation != originalViewElevation)
+            {
+                ShaderData.ViewElevationChanged();
+            }
             ValidateRivers();
             Refresh();
         }
@@ -689,7 +703,7 @@ public class HexCell : MonoBehaviour {
     {
         get
         {
-            return visibility > 0;
+            return visibility > 0 && Explorable;
         }
     }
     //增大可见度
@@ -713,6 +727,43 @@ public class HexCell : MonoBehaviour {
     }
     #endregion
     #region 探索状态
-    public bool IsExplored { get; private set; }
+    public bool IsExplored
+    {
+        get
+        {
+            return explored && Explorable;
+        }
+        private set
+        {
+            explored = value;
+        }
+    }
+    #endregion
+    #region 海拔视野
+    public int ViewElevation
+    {
+        get
+        {
+            return elevation >= waterLevel ? elevation : waterLevel;
+        }
+    }
+    //刷新海拔视野
+    public void ViewElevationChanged()
+    {
+        needsVisibilityReset = true;
+        enabled = true;
+    }
+    //刷新可见性
+    public void ResetVisibility()
+    {
+        if (visibility > 0)
+        {
+            visibility = 0;
+            ShaderData.RefreshVisibility(this);
+        }
+    }
+    #endregion
+    #region 地图边界
+    public bool Explorable { get; set; }//可探测属性：区分边界
     #endregion
 }

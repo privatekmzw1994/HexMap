@@ -42,6 +42,7 @@ public class HexGrid : MonoBehaviour
         HexMetrics.InitializeHashGrid(seed);
         HexUnit.unitPrefab = unitPrefab;
         cellShaderData = gameObject.AddComponent<HexCellShaderData>();
+        cellShaderData.Grid = this;
         CreateMap(cellCountX, cellCountZ);
     }
 
@@ -117,6 +118,7 @@ public class HexGrid : MonoBehaviour
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
             HexUnit.unitPrefab = unitPrefab;
+            ResetVisibility();
         }
     }
 
@@ -133,6 +135,10 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
         cell.Index = i;
         cell.ShaderData = cellShaderData;
+
+        //不在边缘的单元是可探测的，而所有其他单元都是不可探测的。
+        cell.Explorable =
+            x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
 
         //邻居关系建立
         if (x > 0)
@@ -267,6 +273,9 @@ public class HexGrid : MonoBehaviour
             }
         }
 
+        bool originalImmediateMode = cellShaderData.ImmediateMode;
+        cellShaderData.ImmediateMode = true;
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Load(reader,header);
@@ -283,6 +292,7 @@ public class HexGrid : MonoBehaviour
                 HexUnit.Load(reader, this);
             }
         }
+        cellShaderData.ImmediateMode = originalImmediateMode;
     }
     #endregion
     #region 距离
@@ -329,7 +339,8 @@ public class HexGrid : MonoBehaviour
                 HexCell neighbor = current.GetNeighbor(d);
                 if (
                     neighbor == null ||
-                    neighbor.SearchPhase > searchFrontierPhase
+                    neighbor.SearchPhase > searchFrontierPhase ||
+                    !neighbor.Explorable
                 )
                 {
                     continue;
@@ -498,9 +509,11 @@ public class HexGrid : MonoBehaviour
             searchFrontier.Clear();
         }
 
+        range += fromCell.ViewElevation;//海拔视野
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
+        HexCoordinates fromCoordinates = fromCell.coordinates;
         while (searchFrontier.Count > 0)
         {
             HexCell current = searchFrontier.Dequeue();
@@ -517,8 +530,9 @@ public class HexGrid : MonoBehaviour
                     continue;
                 }
                 int distance = current.Distance + 1;
-                if (distance > range)
-                {
+                if (distance + neighbor.ViewElevation > range ||distance > fromCoordinates.DistanceTo(neighbor.coordinates))
+                    //海拔视野阻挡
+                { 
                     continue;
                 }
                 if (neighbor.SearchPhase < searchFrontierPhase)
@@ -557,6 +571,20 @@ public class HexGrid : MonoBehaviour
             cells[i].DecreaseVisibility();
         }
         ListPool<HexCell>.Add(cells);
+    }
+    #endregion
+    #region 海拔视野
+    public void ResetVisibility()
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].ResetVisibility();
+        }
+        for (int i = 0; i < units.Count; i++)
+        {
+            HexUnit unit = units[i];
+            IncreaseVisibility(unit.Location, unit.VisionRange);
+        }
     }
     #endregion
 }
