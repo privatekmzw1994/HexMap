@@ -587,4 +587,15 @@ public class HexGrid : MonoBehaviour
         }
     }
     #endregion
+    #region 生成地图
+    public HexCell GetCell(int xOffset, int zOffset)
+    {
+        return cells[xOffset + zOffset * cellCountX];
+    }
+
+    public HexCell GetCell(int cellIndex)
+    {
+        return cells[cellIndex];
+    }
+    #endregion
 }

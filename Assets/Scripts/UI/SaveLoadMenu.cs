@@ -15,7 +15,7 @@ public class SaveLoadMenu : MonoBehaviour
 
     public SaveLoadItem itemPrefab;
 
-    const int mapFileVersion = 3;//地图版本
+    const int mapFileVersion = 4;//地图版本
 
     public void Open(bool saveMode)
     {
