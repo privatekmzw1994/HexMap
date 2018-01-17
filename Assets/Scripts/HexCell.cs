@@ -32,7 +32,6 @@ public class HexCell : MonoBehaviour {
 
     int visibility;//能见度
 
-    bool needsVisibilityReset;
     bool explored;
 
 
@@ -754,7 +753,6 @@ public class HexCell : MonoBehaviour {
     //刷新海拔视野
     public void ViewElevationChanged()
     {
-        needsVisibilityReset = true;
         enabled = true;
     }
     //刷新可见性
