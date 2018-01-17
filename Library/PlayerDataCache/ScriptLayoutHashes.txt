@@ -8,10 +8,11 @@ a39a94cd5867288572dad0ba6155cf1b Assembly-CSharp.dll:.SaveLoadMenu
 be513afa4dacfa7d8aaadc01035237b8 Assembly-CSharp.dll:.HexGrid
 322cb40e1e282f28af980cbef7922a90 UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsEventTracker
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
+89f95cd1a0f9e7de9425ff4b81df47d1 Assembly-CSharp.dll:.HexMapGenerator
 5871b15982934657f23a94f714797a2e Assembly-CSharp.dll:.HexMapCamera
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Advertisements.dll:UnityEngine.Advertisements.CallbackExecutor
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Advertisements.dll:UnityEngine.Advertisements.Editor.Placeholder
-cd61e26b489bad9b15938167a27e5001 Assembly-CSharp.dll:.NewMapMenu
+7fad6747e479452590addc41ab8ae676 Assembly-CSharp.dll:.NewMapMenu
 65f627f820b4975bf978c8b3c3123544 Assembly-CSharp.dll:.HexMapEditor
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.HexCellShaderData
 5bfc3ae40daf6985571829064f587b13 Assembly-CSharp.dll:.HexFeatureManager
