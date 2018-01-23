@@ -295,7 +295,7 @@ public class HexGrid : MonoBehaviour
         cellShaderData.ImmediateMode = originalImmediateMode;
     }
     #endregion
-    #region 距离
+    #region 距离、寻路
     public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
     {
         ClearPath();

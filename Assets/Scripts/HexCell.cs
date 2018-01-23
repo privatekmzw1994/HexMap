@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 
+    public int cellindex;
 
     int terrainTypeIndex;
 
@@ -678,11 +679,10 @@ public class HexCell : MonoBehaviour {
         highlight.color = color;
         highlight.enabled = true;
     }
-
-    //寻路
-    public HexCell PathFrom { get; set; }
     #endregion
     #region A*寻路
+    //寻路
+    public HexCell PathFrom { get; set; }
     public int SearchHeuristic { get; set; }
     public int SearchPriority//搜索优先级
     {

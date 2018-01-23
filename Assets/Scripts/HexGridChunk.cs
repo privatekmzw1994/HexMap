@@ -8,7 +8,7 @@ public class HexGridChunk : MonoBehaviour
 
     public HexFeatureManager features;
 
-    HexCell[] cells;
+    public HexCell[] cells;//修改过
 
     Canvas gridCanvas;
 

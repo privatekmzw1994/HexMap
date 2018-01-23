@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexGameUI : MonoBehaviour
@@ -8,6 +9,19 @@ public class HexGameUI : MonoBehaviour
     HexCell currentCell;
     HexUnit selectedUnit;
 
+    public HexGridChunk aaaa;
+    List<HexCell> fixedpath = new List<HexCell>();
+    
+    void ok()
+    {
+        fixedpath.Add(grid.GetCell(2));
+        fixedpath.Add(grid.GetCell(10));
+        fixedpath.Add(grid.GetCell(22));
+    }
+    private void Start()
+    {
+        ok();
+    }
     void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
@@ -15,6 +29,7 @@ public class HexGameUI : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 DoSelection();
+                DoRun(fixedpath, selectedUnit);
             }
             else if (selectedUnit)
             {
@@ -90,6 +105,19 @@ public class HexGameUI : MonoBehaviour
         {
             selectedUnit.Travel(grid.GetPath());
             grid.ClearPath();
+        }
+    }
+
+    //既定道路移动
+    void DoRun(List<HexCell> fixedpath,HexUnit unit)
+    {
+        if (unit==selectedUnit)
+        {
+            for (int i = 0; i < fixedpath.Count; i++)
+            {
+                grid.FindPath(fixedpath[i], fixedpath[i+1], unit);
+                DoMove();
+            }
         }
     }
 }
