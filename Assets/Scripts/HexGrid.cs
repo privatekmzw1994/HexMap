@@ -18,7 +18,7 @@ public class HexGrid : MonoBehaviour
 
     public Texture2D noiseSource;
     HexGridChunk[] chunks;
-    HexCell[] cells;
+    public  HexCell[] cells;
     //HexMesh hexMesh;
 
     //int cellCountX, cellCountZ;

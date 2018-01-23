@@ -9,19 +9,22 @@ public class HexGameUI : MonoBehaviour
     HexCell currentCell;
     HexUnit selectedUnit;
 
-    public HexGridChunk aaaa;
     List<HexCell> fixedpath = new List<HexCell>();
     
     void ok()
-    {
-        fixedpath.Add(grid.GetCell(2));
-        fixedpath.Add(grid.GetCell(10));
-        fixedpath.Add(grid.GetCell(22));
+    {       
+        fixedpath.Add(grid.cells[22]);
+        fixedpath.Add(grid.cells[24]);
+        fixedpath.Add(grid.cells[26]);
+        fixedpath.Add(grid.cells[28]);
+        fixedpath.Add(grid.cells[30]);
     }
+
     private void Start()
     {
         ok();
     }
+
     void Update()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
@@ -29,7 +32,10 @@ public class HexGameUI : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 DoSelection();
-                DoRun(fixedpath, selectedUnit);
+                if (selectedUnit)
+                {
+                    DoRun(fixedpath, selectedUnit);
+                }          
             }
             else if (selectedUnit)
             {
@@ -111,12 +117,33 @@ public class HexGameUI : MonoBehaviour
     //既定道路移动
     void DoRun(List<HexCell> fixedpath,HexUnit unit)
     {
-        if (unit==selectedUnit)
-        {
-            for (int i = 0; i < fixedpath.Count; i++)
+
+            for (int i = 0; i < fixedpath.Count - 1; i++)
             {
                 grid.FindPath(fixedpath[i], fixedpath[i+1], unit);
-                DoMove();
+                DoMove();          
+            }
+    }
+
+    //既定道路可视化
+    public bool showGizmo = true;
+    public Color gizmoColor = Color.blue;
+    private void OnDrawGizmos()
+    {
+        if (showGizmo)
+        {
+            Gizmos.color = gizmoColor;
+
+            if (fixedpath!=null)
+            {
+                for (int i = 0; i < fixedpath.Count-1; i++)
+                {
+                    Vector3 pathNodeFront = fixedpath[i].Position;
+                    Vector3 pathNodeBehind = fixedpath[i+1].Position;
+
+                    Gizmos.DrawLine(pathNodeFront, pathNodeBehind);
+
+                }
             }
         }
     }
