@@ -100,7 +100,7 @@ public class HexUnit : MonoBehaviour
         );
     }
 
-    //能都有效到达目的地
+    //能有效到达目的地
     public bool IsValidDestination(HexCell cell)
     {
         //     禁止为探索状态单元寻路

@@ -10,20 +10,6 @@ public class HexGameUI : MonoBehaviour
     HexUnit selectedUnit;
 
     List<HexCell> fixedpath = new List<HexCell>();
-    
-    void ok()
-    {       
-        fixedpath.Add(grid.cells[22]);
-        fixedpath.Add(grid.cells[24]);
-        fixedpath.Add(grid.cells[26]);
-        fixedpath.Add(grid.cells[28]);
-        fixedpath.Add(grid.cells[30]);
-    }
-
-    private void Start()
-    {
-        ok();
-    }
 
     void Update()
     {
@@ -31,11 +17,7 @@ public class HexGameUI : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                DoSelection();
-                if (selectedUnit)
-                {
-                    DoRun(fixedpath, selectedUnit);
-                }          
+                DoSelection();        
             }
             else if (selectedUnit)
             {
@@ -112,17 +94,6 @@ public class HexGameUI : MonoBehaviour
             selectedUnit.Travel(grid.GetPath());
             grid.ClearPath();
         }
-    }
-
-    //既定道路移动
-    void DoRun(List<HexCell> fixedpath,HexUnit unit)
-    {
-
-            for (int i = 0; i < fixedpath.Count - 1; i++)
-            {
-                grid.FindPath(fixedpath[i], fixedpath[i+1], unit);
-                DoMove();          
-            }
     }
 
     //既定道路可视化

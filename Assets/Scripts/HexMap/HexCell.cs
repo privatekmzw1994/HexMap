@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 
-    public int cellindex;
-
     int terrainTypeIndex;
 
     public HexCoordinates coordinates;
