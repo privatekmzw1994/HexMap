@@ -21,7 +21,7 @@ namespace TowerDefense.Nodes
         }
 
         /// <summary>
-        /// When agent enters the node area, get the next node
+        /// When enemy enters the node area, get the next node
         /// </summary>
         public virtual void OnTriggerEnter(Collider other)
         {

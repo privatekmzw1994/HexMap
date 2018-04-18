@@ -11,22 +11,22 @@ namespace Units.Enemy
     public abstract class Enemy : Targetable
     {
         /// <summary>
-        /// A means of keeping track of the agent along its path
+        /// A means of keeping track of the enemy along its path
         /// </summary>
         public enum State
         {
             /// <summary>
-            /// When the agent is on a path that is not blocked
+            /// When the enemy is on a path that is not blocked
             /// </summary>
             OnCompletePath,
 
             /// <summary>
-            /// When the agent is on a path is blocked
+            /// When the enemy is on a path is blocked
             /// </summary>
             OnPartialPath,
 
             /// <summary>
-            /// When the agent has reached the end of a blocked path
+            /// When the enemy has reached the end of a blocked path
             /// </summary>
             Attacking,
 
@@ -36,13 +36,13 @@ namespace Units.Enemy
             PushingThrough,
 
             /// <summary>
-            /// When the agent has completed their path
+            /// When the enemy has completed their path
             /// </summary>
             PathComplete
         }
 
         /// <summary>
-		/// Event fired when agent reached its final node
+		/// Event fired when enemy reached its final node
 		/// </summary>
 		public event Action<Node> destinationReached;
 
@@ -57,7 +57,7 @@ namespace Units.Enemy
 		protected NavMeshAgent m_NavMeshAgent;
 
         /// <summary>
-        /// The Current node that the agent must navigate to
+        /// The Current node that the enemy must navigate to
         /// </summary>
         protected Node m_CurrentNode;
 
@@ -67,7 +67,7 @@ namespace Units.Enemy
         protected Vector3 m_Destination;
 
         /// <summary>
-        /// Gets the attached nav mesh agent velocity
+        /// Gets the attached nav mesh enemy velocity
         /// </summary>
         public override Vector3 velocity
         {
@@ -75,7 +75,7 @@ namespace Units.Enemy
         }
 
         /// <summary>
-        /// The current state of the agent along the path
+        /// The current state of the enemy along the path
         /// </summary>
         public State state { get; protected set; }
 
@@ -89,7 +89,7 @@ namespace Units.Enemy
         }
 
         /// <summary>
-		/// The area mask of the attached nav mesh agent
+		/// The area mask of the attached nav mesh enemy
 		/// </summary>
 		public int navMeshMask
         {
@@ -97,7 +97,7 @@ namespace Units.Enemy
         }
 
         /// <summary>
-        /// Gets this agent's original movement speed
+        /// Gets this enemy's original movement speed
         /// </summary>
         public float originalMovementSpeed { get; private set; }
 
@@ -105,7 +105,7 @@ namespace Units.Enemy
         /// Checks if the path is blocked
         /// </summary>
         /// <value>
-        /// The status of the agent's path
+        /// The status of the enemy's path
         /// </value>
         protected virtual bool isPathBlocked
         {
@@ -123,7 +123,7 @@ namespace Units.Enemy
         /// <summary>
         /// Sets the node to navigate to
         /// </summary>
-        /// <param name="node">The node that the agent will navigate to</param>
+        /// <param name="node">The node that the enemy will navigate to</param>
         public virtual void SetNode(Node node)
         {
             m_CurrentNode = node;
@@ -147,7 +147,7 @@ namespace Units.Enemy
         }
 
         /// <summary>	
-		/// Setup all the necessary parameters for this agent from configuration data
+		/// Setup all the necessary parameters for this enemy from configuration data
 		/// </summary>
         public virtual void Initialize()
         {
@@ -195,7 +195,7 @@ namespace Units.Enemy
         }
 
         /// <summary>
-		/// Moves the agent to a position in the <see cref="Agent.m_CurrentNode" />
+		/// Moves the enemy to a position in the <see cref="Agent.m_CurrentNode" />
 		/// </summary>
 		public virtual void MoveToNode()
         {
@@ -228,7 +228,7 @@ namespace Units.Enemy
         }
 
         /// <summary>
-        /// Updates the agent in its different states, 
+        /// Updates the enemy in its different states, 
         /// Reset destination when path is stale
         /// </summary>
         protected virtual void Update()
@@ -236,12 +236,12 @@ namespace Units.Enemy
             // Update behaviour for different states
             PathUpdate();
 
-            // If the path becomes invalid, repath the agent to the destination
+            // If the path becomes invalid, repath the enemy to the destination
             bool validStalePath = m_NavMeshAgent.isOnNavMesh && m_NavMeshAgent.enabled &&
                                   (!m_NavMeshAgent.hasPath && !m_NavMeshAgent.pathPending);
             if (validStalePath)
             {
-                // Compare against squared stopping distance on agent.
+                // Compare against squared stopping distance on enemy.
                 // We intentionally do not pre-square this value so that it can be changed at runtime dynamically
                 float squareStoppingDistance = m_NavMeshAgent.stoppingDistance * m_NavMeshAgent.stoppingDistance;
                 if (Vector3.SqrMagnitude(m_Destination - transform.position) < squareStoppingDistance &&
@@ -304,14 +304,14 @@ namespace Units.Enemy
         protected abstract void PathUpdate();
 
         /// <summary>
-        /// The behaviour for when the agent has been blocked
+        /// The behaviour for when the enemy has been blocked
         /// </summary>
         protected abstract void OnPartialPathUpdate();
 
 
 #if UNITY_EDITOR
         /// <summary>
-        /// Draw the agent's path
+        /// Draw the enemy's path
         /// </summary>
         protected virtual void OnDrawGizmosSelected()
         {

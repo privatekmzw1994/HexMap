@@ -19,7 +19,7 @@ namespace UnityEngine.AI
         bool m_IgnoreFromBuild;
         public bool ignoreFromBuild { get { return m_IgnoreFromBuild; } set { m_IgnoreFromBuild = value; } }
 
-        // List of agent types the modifier is applied for.
+        // List of enemy types the modifier is applied for.
         // Special values: empty == None, m_AffectedAgents[0] =-1 == All.
         [SerializeField]
         List<int> m_AffectedAgents = new List<int>(new int[] { -1 });    // Default value is All

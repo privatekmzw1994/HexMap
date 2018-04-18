@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TowerDefense.Wave
 {
 	/// <summary>
-	/// Serializable class for specifying properties of spawning an agent
+	/// Serializable class for specifying properties of spawning an enemy
 	/// </summary>
 	[Serializable]
 	public class SpawnInstruction

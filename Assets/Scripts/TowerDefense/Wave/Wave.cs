@@ -82,7 +82,7 @@ namespace TowerDefense.Wave
         }
 
         /// <summary>
-		/// Handles spawning the current agent and sets up the next agent for spawning
+		/// Handles spawning the current enemy and sets up the next enemy for spawning
 		/// </summary>
 		protected virtual void SpawnCurrent()
         {
