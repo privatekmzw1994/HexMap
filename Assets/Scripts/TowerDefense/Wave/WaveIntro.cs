@@ -7,7 +7,7 @@ namespace TowerDefense.Wave
     {
         public event Action introCompleted;
 
-        protected void safelyCallIntroCompleted()
+        protected void SafelyCallIntroCompleted()
         {
             if (introCompleted!=null)
             {
