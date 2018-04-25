@@ -35,9 +35,9 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityTransform
             }
 
             if (targetLookAt.Value != null) {
-                targetTransform.LookAt(worldPosition.Value, worldUp);
-            } else {
                 targetTransform.LookAt(targetLookAt.Value.transform);
+            } else {
+                targetTransform.LookAt(worldPosition.Value, worldUp);
             }
 
             return TaskStatus.Success;

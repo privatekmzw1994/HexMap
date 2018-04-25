@@ -29,7 +29,7 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityParticleSystem
                 Debug.LogWarning("ParticleSystem is null");
                 return TaskStatus.Failure;
             }
-#if UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4
+#if UNITY_5_3 || UNITY_5_4
             particleSystem.maxParticles = maxParticles.Value;
 #else
             ParticleSystem.MainModule mainParticleSystem = particleSystem.main;

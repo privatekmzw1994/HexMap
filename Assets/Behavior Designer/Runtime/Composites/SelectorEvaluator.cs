@@ -45,6 +45,10 @@
 
         public override void OnChildExecuted(int childIndex, TaskStatus childStatus)
         {
+            // A disabled task is the equivalent of the task failing for a selector evaluator.
+            if (childStatus == TaskStatus.Inactive && children[childIndex].Disabled) {
+                executionStatus = TaskStatus.Failure;
+            }
             // The child status will be inactive immediately following an abort from OnReevaluationEnded. The status will be running if the 
             // child task is interrupted. Ignore the status for both of these. 
             if (childStatus != TaskStatus.Inactive && childStatus != TaskStatus.Running) {

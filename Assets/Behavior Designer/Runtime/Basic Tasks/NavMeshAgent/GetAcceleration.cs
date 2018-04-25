@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-#if !(UNITY_5_1 || UNITY_5_2 || UNITY_5_3 || UNITY_5_4)
+#if !(UNITY_5_3 || UNITY_5_4)
 using UnityEngine.AI;
 #endif
 

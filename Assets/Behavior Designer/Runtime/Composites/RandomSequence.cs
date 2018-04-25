@@ -29,7 +29,7 @@ namespace BehaviorDesigner.Runtime.Tasks
         {
             // If specified, use the seed provided.
             if (useSeed) {
-#if !(UNITY_5_1 || UNITY_5_2 || UNITY_5_3)
+#if !(UNITY_5_3)
                 Random.InitState(seed);
 #else
                 Random.seed = seed;

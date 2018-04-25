@@ -8,13 +8,20 @@ namespace BehaviorDesigner.Runtime.Tasks.Basic.UnityGameObject
     {
         [Tooltip("The tag of the GameObject to find")]
         public SharedString tag;
+        [Tooltip("Should a random GameObject be found?")]
+        public SharedBool random;
         [Tooltip("The object found by name")]
         [RequiredField]
         public SharedGameObject storeValue;
 
         public override TaskStatus OnUpdate()
         {
-            storeValue.Value = GameObject.FindWithTag(tag.Value);
+            if (random.Value) {
+                var gameObjects = GameObject.FindGameObjectsWithTag(tag.Value);
+                storeValue.Value = gameObjects[Random.Range(0, gameObjects.Length - 1)];
+            } else {
+                storeValue.Value = GameObject.FindWithTag(tag.Value);
+            }
 
             return TaskStatus.Success;
         }
